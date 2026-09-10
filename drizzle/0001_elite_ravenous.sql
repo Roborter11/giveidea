@@ -1,0 +1,1 @@
+CREATE INDEX `idx_ideas_created_at` ON `ideas` (`created_at`);
