@@ -15,9 +15,7 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    'https://sut-product-ideas.lush-boar-6095.chatgpt.site',
-  ),
+  metadataBase: new URL('https://sut-product-ideas.roborter.chatgpt.site'),
   title: 'Суть — идеи, из которых растут продукты',
   description:
     'Поделитесь идеей или проблемой — мы изучим её и соберём команду для запуска SaaS или B2B-продукта.',
