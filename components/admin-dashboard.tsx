@@ -1,14 +1,20 @@
 'use client';
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+/* oxlint-disable next/no-html-link-for-pages -- vinext uses native document navigation */
+
+import {
+  type SyntheticEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   Archive,
   ArrowLeft,
-  ArrowUpRight,
   Check,
   Inbox,
   LoaderCircle,
-  LockKeyhole,
   LogOut,
   Mail,
 } from 'lucide-react';
@@ -36,8 +42,8 @@ const statusLabels: Record<IdeaStatus, string> = {
 };
 
 const statusTone: Record<IdeaStatus, string> = {
-  new: 'bg-signal text-foreground',
-  reviewed: 'bg-soft text-foreground',
+  new: 'bg-brand/10 text-brand',
+  reviewed: 'bg-muted text-foreground',
   archived: 'bg-muted text-muted-foreground',
 };
 
@@ -63,10 +69,34 @@ export function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    loadIdeas().catch(() => setView('login'));
-  }, [loadIdeas]);
+    let active = true;
 
-  async function handleLogin(event: FormEvent<HTMLFormElement>) {
+    fetch('/api/admin/ideas', { cache: 'no-store' })
+      .then(async (response) => {
+        if (!active) return;
+        if (response.status === 401) {
+          setView('login');
+          return;
+        }
+        if (!response.ok) throw new Error('Не удалось загрузить идеи.');
+
+        const data = (await response.json()) as { ideas: Idea[] };
+        if (!active) return;
+        setIdeas(data.ideas);
+        setView('ready');
+      })
+      .catch(() => {
+        if (active) setView('login');
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  async function handleLogin(
+    event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
+  ) {
     event.preventDefault();
     setIsLoggingIn(true);
     setLoginError('');
@@ -116,68 +146,51 @@ export function AdminDashboard() {
     [filter, ideas],
   );
   const newCount = ideas.filter((idea) => idea.status === 'new').length;
-  const reviewedCount = ideas.filter(
-    (idea) => idea.status === 'reviewed',
-  ).length;
-  const archivedCount = ideas.filter(
-    (idea) => idea.status === 'archived',
-  ).length;
 
   if (view === 'loading') {
     return (
-      <main className="grid min-h-screen place-items-center bg-foreground text-white">
-        <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em]">
-          <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-          Загружаем идеи
-        </div>
+      <main className="grid min-h-screen place-items-center bg-background">
+        <LoaderCircle
+          className="size-5 animate-spin text-muted-foreground"
+          aria-label="Загружаем идеи"
+        />
       </main>
     );
   }
 
   if (view === 'login') {
     return (
-      <main className="min-h-screen bg-surface lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(440px,0.9fr)]">
-        <section className="blueprint-rule flex min-h-[36svh] flex-col justify-between bg-brand p-5 text-white sm:min-h-[42vh] sm:p-10 lg:min-h-screen lg:p-12">
-          <a
-            href="/"
-            className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-white/75 hover:text-white"
-          >
-            <ArrowLeft className="size-4" aria-hidden="true" />
-            Вернуться на сайт
-          </a>
-          <div>
-            <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.16em] text-white/60">
-              Закрытый контур / 01
-            </p>
-            <h1 className="max-w-3xl text-[clamp(3.6rem,8vw,8rem)] font-semibold leading-[0.84] tracking-[-0.075em]">
-              Вход для команды.
-            </h1>
+      <main className="min-h-screen bg-background">
+        <header className="border-b border-foreground/10">
+          <div className="mx-auto flex h-16 max-w-6xl items-center px-5 sm:px-8">
+            <a
+              href="/"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              На главную
+            </a>
           </div>
-        </section>
+        </header>
 
-        <section className="flex items-center px-5 py-12 sm:px-10 lg:px-14">
-          <form className="mx-auto w-full max-w-md" onSubmit={handleLogin}>
-            <span className="mb-9 grid size-12 place-items-center bg-foreground text-white">
-              <LockKeyhole className="size-5" aria-hidden="true" />
-            </span>
-            <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand">
-              Авторизация
+        <section className="mx-auto flex max-w-6xl justify-center px-5 py-14 sm:px-8 sm:py-24">
+          <form className="w-full max-w-sm" onSubmit={handleLogin}>
+            <a href="/" className="text-lg font-semibold tracking-[-0.04em]">
+              Суть<span className="text-brand">.</span>
+            </a>
+            <h1 className="mt-10 text-3xl font-semibold tracking-[-0.05em]">
+              Вход для команды
+            </h1>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Введите пароль администратора.
             </p>
-            <h2 className="mt-3 text-4xl font-semibold tracking-[-0.055em]">
-              Введите пароль
-            </h2>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Здесь находятся контакты и описания идей. Доступ есть только у
-              администраторов.
-            </p>
-            <label className="field-label mt-10">
-              <span>Пароль администратора</span>
+            <label className="field-label mt-8" htmlFor="admin-password">
+              <span>Пароль</span>
               <Input
                 id="admin-password"
                 name="password"
                 type="password"
                 required
-                autoFocus
                 autoComplete="current-password"
                 className="field-input"
               />
@@ -190,7 +203,7 @@ export function AdminDashboard() {
             <Button
               type="submit"
               disabled={isLoggingIn}
-              className="mt-7 h-13 w-full bg-brand font-mono text-[11px] uppercase tracking-[0.08em] text-white hover:bg-foreground"
+              className="mt-5 h-12 w-full bg-brand text-base text-white hover:bg-foreground"
             >
               {isLoggingIn ? (
                 <LoaderCircle
@@ -198,7 +211,7 @@ export function AdminDashboard() {
                   aria-hidden="true"
                 />
               ) : null}
-              Открыть панель
+              Войти
             </Button>
           </form>
         </section>
@@ -208,183 +221,139 @@ export function AdminDashboard() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 flex h-[68px] items-stretch bg-foreground text-white">
-        <a
-          href="/"
-          className="flex w-[132px] items-center border-r border-white/20 px-5 font-mono text-sm font-semibold tracking-[0.12em] sm:w-[190px] sm:px-8"
-        >
-          СУТЬ<span className="text-signal">/</span>
-        </a>
-        <div className="flex flex-1 items-center justify-between px-5 sm:px-8">
-          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/55">
-            <span className="sm:hidden">Admin</span>
-            <span className="hidden sm:inline">Панель администратора</span>
-          </span>
+      <header className="border-b border-foreground/10 bg-background">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
+          <a href="/" className="text-lg font-semibold tracking-[-0.04em]">
+            Суть<span className="text-brand">.</span>
+          </a>
           <Button
             variant="ghost"
             size="sm"
             onClick={logout}
-            className="font-mono text-[10px] uppercase tracking-[0.1em] text-white hover:bg-white/10 hover:text-white"
+            className="text-muted-foreground hover:text-foreground"
           >
-            <LogOut className="size-3.5" aria-hidden="true" />
+            <LogOut className="size-4" aria-hidden="true" />
             Выйти
           </Button>
         </div>
       </header>
 
-      <div className="lg:grid lg:min-h-[calc(100vh-68px)] lg:grid-cols-[280px_minmax(0,1fr)]">
-        <aside className="bg-brand px-5 py-7 text-white sm:px-8 lg:sticky lg:top-[68px] lg:flex lg:h-[calc(100vh-68px)] lg:flex-col lg:justify-between lg:p-8">
+      <section className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
+        <div className="flex flex-col gap-5 border-b border-foreground/10 pb-7 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/60">
-              Сводка
+            <h1 className="text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">
+              Идеи
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {newCount === 0
+                ? 'Новых заявок нет'
+                : `Новых заявок: ${newCount}`}
             </p>
-            <div className="mt-5 grid grid-cols-3 gap-px bg-white/20 lg:grid-cols-1">
-              {[
-                ['Новые', newCount],
-                ['Изучены', reviewedCount],
-                ['Архив', archivedCount],
-              ].map(([label, value]) => (
-                <div key={label} className="bg-brand py-3 lg:py-5">
-                  <span className="block font-mono text-[9px] uppercase tracking-[0.12em] text-white/55">
-                    {label}
-                  </span>
-                  <strong className="mt-1 block text-2xl font-semibold tracking-[-0.04em] lg:text-4xl">
-                    {String(value).padStart(2, '0')}
-                  </strong>
-                </div>
-              ))}
-            </div>
           </div>
-          <p className="mt-8 hidden font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-white/45 lg:block">
-            Новые заявки появляются здесь автоматически
-          </p>
-        </aside>
+          <div className="flex w-fit rounded-lg bg-muted p-1 text-sm">
+            <button
+              type="button"
+              className={`rounded-md px-4 py-2 transition-colors ${filter === 'active' ? 'bg-surface text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              onClick={() => setFilter('active')}
+            >
+              Активные
+            </button>
+            <button
+              type="button"
+              className={`rounded-md px-4 py-2 transition-colors ${filter === 'all' ? 'bg-surface text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              onClick={() => setFilter('all')}
+            >
+              Все
+            </button>
+          </div>
+        </div>
 
-        <section className="px-5 py-8 sm:px-8 sm:py-10 lg:px-10 xl:px-14 xl:py-12">
-          <div className="mb-8 flex flex-col gap-6 border-b border-foreground/18 pb-8 sm:flex-row sm:items-end sm:justify-between lg:mb-10">
+        {visibleIdeas.length === 0 ? (
+          <div className="mt-8 grid min-h-72 place-items-center rounded-lg border border-foreground/10 bg-surface px-5 text-center">
             <div>
-              <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.15em] text-brand">
-                Рабочая очередь
+              <Inbox
+                className="mx-auto size-5 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <p className="mt-4 font-medium">Здесь пока пусто</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Новые идеи появятся автоматически.
               </p>
-              <h1 className="text-[clamp(3rem,6vw,6rem)] font-semibold leading-[0.88] tracking-[-0.07em]">
-                Входящие идеи
-              </h1>
-            </div>
-            <div className="grid grid-cols-2 border border-foreground/25 bg-surface p-1 font-mono text-[10px] uppercase tracking-[0.08em]">
-              <button
-                type="button"
-                className={`min-h-10 px-5 ${filter === 'active' ? 'bg-foreground text-white' : 'hover:bg-muted'}`}
-                onClick={() => setFilter('active')}
-              >
-                Активные
-              </button>
-              <button
-                type="button"
-                className={`min-h-10 px-5 ${filter === 'all' ? 'bg-foreground text-white' : 'hover:bg-muted'}`}
-                onClick={() => setFilter('all')}
-              >
-                Все
-              </button>
             </div>
           </div>
-
-          {visibleIdeas.length === 0 ? (
-            <div className="grid min-h-[360px] place-items-center border border-foreground/20 bg-surface px-5 text-center">
-              <div>
-                <span className="mx-auto mb-5 grid size-12 place-items-center bg-soft">
-                  <Inbox className="size-5" aria-hidden="true" />
-                </span>
-                <p className="text-xl font-semibold">В очереди пока пусто</p>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Новые идеи появятся здесь автоматически.
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {visibleIdeas.map((idea, index) => (
-                <article
-                  key={idea.id}
-                  className={`border border-foreground/20 bg-surface ${idea.status === 'archived' ? 'opacity-55' : ''}`}
-                >
-                  <div className="flex items-center justify-between border-b border-foreground/15 px-4 py-3 sm:px-5">
-                    <div className="flex items-center gap-3">
-                      <span className="font-mono text-[10px] text-muted-foreground">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                      <span
-                        className={`px-2 py-1 font-mono text-[9px] uppercase tracking-[0.08em] ${statusTone[idea.status]}`}
-                      >
-                        {statusLabels[idea.status]}
-                      </span>
-                    </div>
-                    <time className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-foreground">
+        ) : (
+          <div className="mt-8 space-y-4">
+            {visibleIdeas.map((idea) => (
+              <article
+                key={idea.id}
+                className={`rounded-lg border border-foreground/10 bg-surface p-5 sm:p-6 ${idea.status === 'archived' ? 'opacity-60' : ''}`}
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="font-semibold">{idea.name}</p>
+                    <a
+                      href={`mailto:${idea.email}`}
+                      className="mt-1 inline-block break-all text-sm text-brand hover:underline"
+                    >
+                      {idea.email}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <span
+                      className={`rounded-full px-2.5 py-1 ${statusTone[idea.status]}`}
+                    >
+                      {statusLabels[idea.status]}
+                    </span>
+                    <time>
                       {new Intl.DateTimeFormat('ru-RU', {
-                        day: '2-digit',
+                        day: 'numeric',
                         month: 'short',
                         year: 'numeric',
                       }).format(new Date(idea.createdAt))}
                     </time>
                   </div>
+                </div>
 
-                  <div className="grid gap-7 p-5 sm:p-6 xl:grid-cols-[200px_minmax(0,1fr)_150px]">
-                    <div>
-                      <p className="text-lg font-semibold tracking-[-0.025em]">
-                        {idea.name}
-                      </p>
-                      <a
-                        href={`mailto:${idea.email}`}
-                        className="mt-2 inline-flex max-w-full items-center gap-1 break-all font-mono text-[10px] text-brand hover:underline"
-                      >
-                        {idea.email}
-                        <ArrowUpRight className="size-3" aria-hidden="true" />
-                      </a>
-                    </div>
+                <p className="mt-5 max-w-3xl whitespace-pre-wrap text-[15px] leading-relaxed">
+                  {idea.idea}
+                </p>
 
-                    <p className="max-w-3xl whitespace-pre-wrap text-base leading-relaxed">
-                      {idea.idea}
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-2 xl:flex xl:flex-col">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={
-                          updatingId === idea.id || idea.status === 'reviewed'
-                        }
-                        className="min-h-11 border-foreground/25 bg-transparent font-mono text-[10px] uppercase xl:min-h-0"
-                        onClick={() => updateStatus(idea.id, 'reviewed')}
-                      >
-                        <Check className="size-3.5" aria-hidden="true" />
-                        Изучена
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={
-                          updatingId === idea.id || idea.status === 'archived'
-                        }
-                        className="min-h-11 border-foreground/25 bg-transparent font-mono text-[10px] uppercase xl:min-h-0"
-                        onClick={() => updateStatus(idea.id, 'archived')}
-                      >
-                        <Archive className="size-3.5" aria-hidden="true" />
-                        Архив
-                      </Button>
-                      <a
-                        href={`mailto:${idea.email}`}
-                        className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 bg-foreground px-3 font-mono text-[10px] uppercase text-white hover:bg-brand xl:min-h-8"
-                      >
-                        <Mail className="size-3.5" aria-hidden="true" />
-                        Ответить
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={
+                      updatingId === idea.id || idea.status === 'reviewed'
+                    }
+                    onClick={() => updateStatus(idea.id, 'reviewed')}
+                  >
+                    <Check className="size-3.5" aria-hidden="true" />
+                    Изучена
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={
+                      updatingId === idea.id || idea.status === 'archived'
+                    }
+                    onClick={() => updateStatus(idea.id, 'archived')}
+                  >
+                    <Archive className="size-3.5" aria-hidden="true" />
+                    В архив
+                  </Button>
+                  <a
+                    href={`mailto:${idea.email}`}
+                    className="inline-flex h-7 items-center justify-center gap-1 rounded-md bg-foreground px-2.5 text-[0.8rem] font-medium text-white transition-colors hover:bg-foreground/80"
+                  >
+                    <Mail className="size-3.5" aria-hidden="true" />
+                    Ответить
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }

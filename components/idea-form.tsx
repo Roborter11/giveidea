@@ -1,27 +1,21 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
-import { ArrowUpRight, Check, LoaderCircle } from 'lucide-react';
+import { type SyntheticEvent, useState } from 'react';
+import { Check, LoaderCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
-export function IdeaForm({
-  formId = 'idea-form',
-  compact = false,
-}: {
-  formId?: string;
-  compact?: boolean;
-}) {
+export function IdeaForm({ formId = 'idea-form' }: { formId?: string }) {
   const [state, setState] = useState<FormState>('idle');
   const [error, setError] = useState('');
-  const [ideaLength, setIdeaLength] = useState(0);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
+  ) {
     event.preventDefault();
     setState('submitting');
     setError('');
@@ -42,7 +36,6 @@ export function IdeaForm({
       }
 
       form.reset();
-      setIdeaLength(0);
       setState('success');
     } catch (caughtError) {
       setError(
@@ -56,36 +49,20 @@ export function IdeaForm({
 
   if (state === 'success') {
     return (
-      <div
-        className={cn(
-          'flex flex-col justify-between border-t-4 border-brand bg-surface p-6',
-          compact ? 'min-h-[330px]' : 'min-h-[380px]',
-        )}
-      >
-        <div>
-          <span className="mb-8 grid size-12 place-items-center bg-signal text-foreground">
-            <Check className="size-5" strokeWidth={2.5} aria-hidden="true" />
-          </span>
-          <h3
-            className={cn(
-              'max-w-md font-medium tracking-[-0.05em]',
-              compact ? 'text-3xl sm:text-4xl' : 'text-4xl',
-            )}
-          >
-            Идея уже у нас.
-          </h3>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Мы внимательно изучим описание. Если увидим совпадение по опыту и
-            потенциалу — напишем на указанную почту.
-          </p>
-        </div>
+      <div className="rounded-lg border border-foreground/10 bg-surface p-6 sm:p-8">
+        <span className="grid size-9 place-items-center rounded-full bg-brand text-white">
+          <Check className="size-4" strokeWidth={2.5} aria-hidden="true" />
+        </span>
+        <h3 className="mt-6 text-2xl font-semibold tracking-[-0.04em]">
+          Идея отправлена
+        </h3>
+        <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+          Изучим описание и напишем, если сможем помочь.
+        </p>
         <Button
           type="button"
           variant="outline"
-          className={cn(
-            'border-foreground/25 bg-transparent px-4 font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-foreground hover:text-white',
-            compact ? 'h-12 w-full sm:w-fit' : 'h-11 w-fit',
-          )}
+          className="mt-7 h-11 bg-transparent"
           onClick={() => setState('idle')}
         >
           Отправить ещё одну
@@ -95,19 +72,10 @@ export function IdeaForm({
   }
 
   return (
-    <form
-      id={formId}
-      className={compact ? 'scroll-mt-20 space-y-6' : 'space-y-7'}
-      onSubmit={handleSubmit}
-    >
-      <div
-        className={cn(
-          'grid gap-7',
-          compact ? 'md:grid-cols-2' : 'sm:grid-cols-2',
-        )}
-      >
-        <label className="field-label">
-          <span>Ваше имя</span>
+    <form id={formId} className="space-y-5" onSubmit={handleSubmit}>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="field-label" htmlFor={`${formId}-name`}>
+          <span>Имя</span>
           <Input
             id={`${formId}-name`}
             name="name"
@@ -119,7 +87,7 @@ export function IdeaForm({
             className="field-input"
           />
         </label>
-        <label className="field-label">
+        <label className="field-label" htmlFor={`${formId}-email`}>
           <span>Почта</span>
           <Input
             id={`${formId}-email`}
@@ -139,55 +107,25 @@ export function IdeaForm({
         <input name="website" tabIndex={-1} autoComplete="off" />
       </label>
 
-      <label className="field-label">
-        <span className="flex items-center justify-between">
-          <span>Идея или проблема</span>
-          <span className="font-mono text-[10px] tracking-normal text-brand">
-            {ideaLength} / 5000
-          </span>
-        </span>
+      <label className="field-label" htmlFor={`${formId}-idea`}>
+        <span>Идея</span>
         <Textarea
           id={`${formId}-idea`}
           name="idea"
           required
           minLength={20}
           maxLength={5000}
-          onChange={(event) => setIdeaLength(event.target.value.length)}
-          placeholder="Кто сталкивается с проблемой? Как её решают сейчас? Что можно сделать лучше?"
-          className={cn(
-            'resize-y rounded-[0.25rem] border border-input bg-surface px-4 py-3 text-base leading-relaxed normal-case tracking-normal shadow-none focus-visible:border-brand focus-visible:ring-3 focus-visible:ring-brand/20',
-            compact ? 'min-h-36' : 'min-h-40',
-          )}
+          placeholder="Какую проблему вы хотите решить?"
+          className="min-h-36 resize-y rounded-lg border-input bg-surface px-4 py-3 text-base leading-relaxed shadow-none focus-visible:border-brand focus-visible:ring-3 focus-visible:ring-brand/15"
         />
       </label>
 
-      <div
-        className={cn(
-          'flex flex-col gap-5 pt-2',
-          compact ? '' : 'sm:flex-row sm:items-center sm:justify-between',
-        )}
-      >
-        <div className="max-w-[290px]">
-          <p className="font-mono text-[10px] leading-relaxed text-muted-foreground">
-            Нажимая «Отправить», вы соглашаетесь на обработку контактных данных.
-          </p>
-          {error ? (
-            <p
-              role="alert"
-              className="mt-2 text-xs font-medium text-destructive"
-            >
-              {error}
-            </p>
-          ) : null}
-        </div>
+      <div className="pt-1">
         <Button
           type="submit"
           size="lg"
           disabled={state === 'submitting'}
-          className={cn(
-            'h-13 min-w-[190px] bg-brand px-6 font-mono text-[11px] uppercase tracking-[0.06em] text-white hover:bg-foreground',
-            compact && 'h-14 w-full text-base',
-          )}
+          className="h-12 w-full bg-brand px-6 text-base text-white hover:bg-foreground sm:w-auto"
         >
           {state === 'submitting' ? (
             <>
@@ -198,12 +136,17 @@ export function IdeaForm({
               Отправляем
             </>
           ) : (
-            <>
-              Отправить идею
-              <ArrowUpRight className="size-4" aria-hidden="true" />
-            </>
+            'Отправить идею'
           )}
         </Button>
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          Нажимая кнопку, вы соглашаетесь на обработку контактных данных.
+        </p>
+        {error ? (
+          <p role="alert" className="mt-2 text-sm text-destructive">
+            {error}
+          </p>
+        ) : null}
       </div>
     </form>
   );

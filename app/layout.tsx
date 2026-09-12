@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { IBM_Plex_Mono, Manrope } from 'next/font/google';
+import { Manrope } from 'next/font/google';
 
 import './globals.css';
 
@@ -8,21 +8,14 @@ const manrope = Manrope({
   subsets: ['cyrillic', 'latin'],
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: '--font-plex-mono',
-  subsets: ['cyrillic', 'latin'],
-  weight: ['400', '500', '600'],
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL('https://sut-product-ideas.roborter.chatgpt.site'),
-  title: 'Суть — превращаем идеи в продукты',
+  title: 'Суть — идеи, из которых растут продукты',
   description:
-    'Опишите реальную проблему. Мы проверим гипотезу и соберём SaaS или B2B-продукт.',
+    'Опишите идею и оставьте контакты. Мы изучим заявку и напишем, если сможем помочь.',
   openGraph: {
-    title: 'Не храните идею в заметках.',
-    description:
-      'Суть — продуктовая лаборатория. Передайте нам проблему, которую стоит решить.',
+    title: 'Есть идея? Расскажите.',
+    description: 'Суть — идеи, из которых растут продукты.',
     type: 'website',
     locale: 'ru_RU',
     images: [
@@ -30,14 +23,14 @@ export const metadata: Metadata = {
         url: '/og.png',
         width: 1200,
         height: 630,
-        alt: 'Не храните идею в заметках.',
+        alt: 'Есть идея? Расскажите.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Не храните идею в заметках.',
-    description: 'Суть — продуктовая лаборатория.',
+    title: 'Есть идея? Расскажите.',
+    description: 'Суть — идеи, из которых растут продукты.',
     images: ['/og.png'],
   },
 };
@@ -49,9 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${manrope.variable} ${plexMono.variable}`}>
-        {children}
-      </body>
+      <body className={manrope.variable}>{children}</body>
     </html>
   );
 }
