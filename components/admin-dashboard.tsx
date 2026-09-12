@@ -21,6 +21,12 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  useLanguage,
+  useLocalizedDocument,
+} from '@/components/language-provider';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { dateLocales, localizedHref } from '@/lib/i18n';
 
 type IdeaStatus = 'new' | 'reviewed' | 'archived';
 
@@ -35,12 +41,6 @@ type Idea = {
 
 type ViewState = 'loading' | 'login' | 'ready';
 
-const statusLabels: Record<IdeaStatus, string> = {
-  new: 'Новая',
-  reviewed: 'Изучена',
-  archived: 'Архив',
-};
-
 const statusTone: Record<IdeaStatus, string> = {
   new: 'bg-brand/10 text-brand',
   reviewed: 'bg-muted text-foreground',
@@ -48,6 +48,7 @@ const statusTone: Record<IdeaStatus, string> = {
 };
 
 export function AdminDashboard() {
+  const { locale, t } = useLanguage();
   const [view, setView] = useState<ViewState>('loading');
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [filter, setFilter] = useState<'active' | 'all'>('active');
@@ -55,18 +56,31 @@ export function AdminDashboard() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
+  useLocalizedDocument({
+    title: t.meta.adminTitle,
+    description: t.admin.loginDescription,
+    socialTitle: t.meta.adminTitle,
+    locale,
+  });
+
+  const statusLabels: Record<IdeaStatus, string> = {
+    new: t.admin.statusNew,
+    reviewed: t.admin.statusReviewed,
+    archived: t.admin.statusArchived,
+  };
+
   const loadIdeas = useCallback(async () => {
     const response = await fetch('/api/admin/ideas', { cache: 'no-store' });
     if (response.status === 401) {
       setView('login');
       return;
     }
-    if (!response.ok) throw new Error('Не удалось загрузить идеи.');
+    if (!response.ok) throw new Error(t.admin.loadError);
 
     const data = (await response.json()) as { ideas: Idea[] };
     setIdeas(data.ideas);
     setView('ready');
-  }, []);
+  }, [t.admin.loadError]);
 
   useEffect(() => {
     let active = true;
@@ -78,7 +92,7 @@ export function AdminDashboard() {
           setView('login');
           return;
         }
-        if (!response.ok) throw new Error('Не удалось загрузить идеи.');
+        if (!response.ok) throw new Error(t.admin.loadError);
 
         const data = (await response.json()) as { ideas: Idea[] };
         if (!active) return;
@@ -92,7 +106,7 @@ export function AdminDashboard() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [t.admin.loadError]);
 
   async function handleLogin(
     event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
@@ -105,12 +119,12 @@ export function AdminDashboard() {
     const response = await fetch('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ password, locale }),
     });
     const data = (await response.json()) as { error?: string };
 
     if (!response.ok) {
-      setLoginError(data.error || 'Не удалось войти.');
+      setLoginError(data.error || t.admin.loginError);
       setIsLoggingIn(false);
       return;
     }
@@ -152,7 +166,7 @@ export function AdminDashboard() {
       <main className="grid min-h-screen place-items-center bg-background">
         <LoaderCircle
           className="size-5 animate-spin text-muted-foreground"
-          aria-label="Загружаем идеи"
+          aria-label={t.admin.loading}
         />
       </main>
     );
@@ -162,30 +176,35 @@ export function AdminDashboard() {
     return (
       <main className="min-h-screen bg-background">
         <header className="border-b border-foreground/10">
-          <div className="mx-auto flex h-16 max-w-6xl items-center px-5 sm:px-8">
+          <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
             <a
-              href="/"
+              href={localizedHref('/', locale)}
               className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
-              На главную
+              {t.admin.backHome}
             </a>
+            <LanguageSwitcher />
           </div>
         </header>
 
         <section className="mx-auto flex max-w-6xl justify-center px-5 py-14 sm:px-8 sm:py-24">
           <form className="w-full max-w-sm" onSubmit={handleLogin}>
-            <a href="/" className="text-lg font-semibold tracking-[-0.04em]">
-              Суть<span className="text-brand">.</span>
+            <a
+              href={localizedHref('/', locale)}
+              className="text-lg font-semibold tracking-[-0.04em]"
+            >
+              {t.common.brand}
+              <span className="text-brand">.</span>
             </a>
             <h1 className="mt-10 text-3xl font-semibold tracking-[-0.05em]">
-              Вход для команды
+              {t.admin.loginTitle}
             </h1>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Введите пароль администратора.
+              {t.admin.loginDescription}
             </p>
             <label className="field-label mt-8" htmlFor="admin-password">
-              <span>Пароль</span>
+              <span>{t.admin.password}</span>
               <Input
                 id="admin-password"
                 name="password"
@@ -211,7 +230,7 @@ export function AdminDashboard() {
                   aria-hidden="true"
                 />
               ) : null}
-              Войти
+              {t.admin.login}
             </Button>
           </form>
         </section>
@@ -223,18 +242,25 @@ export function AdminDashboard() {
     <main className="min-h-screen bg-background">
       <header className="border-b border-foreground/10 bg-background">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-          <a href="/" className="text-lg font-semibold tracking-[-0.04em]">
-            Суть<span className="text-brand">.</span>
-          </a>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={logout}
-            className="text-muted-foreground hover:text-foreground"
+          <a
+            href={localizedHref('/', locale)}
+            className="text-lg font-semibold tracking-[-0.04em]"
           >
-            <LogOut className="size-4" aria-hidden="true" />
-            Выйти
-          </Button>
+            {t.common.brand}
+            <span className="text-brand">.</span>
+          </a>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSwitcher />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={logout}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <LogOut className="size-4" aria-hidden="true" />
+              {t.admin.logout}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -242,12 +268,12 @@ export function AdminDashboard() {
         <div className="flex flex-col gap-5 border-b border-foreground/10 pb-7 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">
-              Идеи
+              {t.admin.ideas}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
               {newCount === 0
-                ? 'Новых заявок нет'
-                : `Новых заявок: ${newCount}`}
+                ? t.admin.noNewIdeas
+                : t.admin.newIdeasCount(newCount)}
             </p>
           </div>
           <div className="flex w-fit rounded-lg bg-muted p-1 text-sm">
@@ -256,14 +282,14 @@ export function AdminDashboard() {
               className={`rounded-md px-4 py-2 transition-colors ${filter === 'active' ? 'bg-surface text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
               onClick={() => setFilter('active')}
             >
-              Активные
+              {t.admin.active}
             </button>
             <button
               type="button"
               className={`rounded-md px-4 py-2 transition-colors ${filter === 'all' ? 'bg-surface text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
               onClick={() => setFilter('all')}
             >
-              Все
+              {t.admin.all}
             </button>
           </div>
         </div>
@@ -275,9 +301,9 @@ export function AdminDashboard() {
                 className="mx-auto size-5 text-muted-foreground"
                 aria-hidden="true"
               />
-              <p className="mt-4 font-medium">Здесь пока пусто</p>
+              <p className="mt-4 font-medium">{t.admin.emptyTitle}</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                Новые идеи появятся автоматически.
+                {t.admin.emptyDescription}
               </p>
             </div>
           </div>
@@ -305,7 +331,7 @@ export function AdminDashboard() {
                       {statusLabels[idea.status]}
                     </span>
                     <time>
-                      {new Intl.DateTimeFormat('ru-RU', {
+                      {new Intl.DateTimeFormat(dateLocales[locale], {
                         day: 'numeric',
                         month: 'short',
                         year: 'numeric',
@@ -328,7 +354,7 @@ export function AdminDashboard() {
                     onClick={() => updateStatus(idea.id, 'reviewed')}
                   >
                     <Check className="size-3.5" aria-hidden="true" />
-                    Изучена
+                    {t.admin.reviewedAction}
                   </Button>
                   <Button
                     variant="outline"
@@ -339,14 +365,14 @@ export function AdminDashboard() {
                     onClick={() => updateStatus(idea.id, 'archived')}
                   >
                     <Archive className="size-3.5" aria-hidden="true" />
-                    В архив
+                    {t.admin.archiveAction}
                   </Button>
                   <a
                     href={`mailto:${idea.email}`}
                     className="inline-flex h-7 items-center justify-center gap-1 rounded-md bg-foreground px-2.5 text-[0.8rem] font-medium text-white transition-colors hover:bg-foreground/80"
                   >
                     <Mail className="size-3.5" aria-hidden="true" />
-                    Ответить
+                    {t.admin.replyAction}
                   </a>
                 </div>
               </article>

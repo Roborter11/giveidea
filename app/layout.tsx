@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
 
+import { LanguageProvider } from '@/components/language-provider';
+
 import './globals.css';
 
 const manrope = Manrope({
@@ -42,7 +44,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={manrope.variable}>{children}</body>
+      <body className={manrope.variable}>
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
   );
 }

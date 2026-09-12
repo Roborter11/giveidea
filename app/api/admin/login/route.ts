@@ -4,22 +4,23 @@ import {
   isPasswordValid,
   sessionCookie,
 } from '@/lib/admin-auth';
+import { getMessages } from '@/lib/i18n';
 
 export async function POST(request: Request) {
-  if (!isAdminConfigured()) {
-    return Response.json(
-      { error: 'Пароль администратора ещё не настроен.' },
-      { status: 503 },
-    );
-  }
-
   const body = (await request.json().catch(() => ({}))) as {
     password?: unknown;
+    locale?: unknown;
   };
+  const t = getMessages(body.locale).admin;
+
+  if (!isAdminConfigured()) {
+    return Response.json({ error: t.passwordNotConfigured }, { status: 503 });
+  }
+
   const password = typeof body.password === 'string' ? body.password : '';
 
   if (!(await isPasswordValid(password))) {
-    return Response.json({ error: 'Неверный пароль.' }, { status: 401 });
+    return Response.json({ error: t.wrongPassword }, { status: 401 });
   }
 
   const token = await createSessionToken();
