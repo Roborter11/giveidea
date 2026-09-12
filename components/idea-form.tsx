@@ -58,13 +58,13 @@ export function IdeaForm({
     return (
       <div
         className={cn(
-          'flex flex-col justify-between border-t border-foreground/20 pt-7',
+          'flex flex-col justify-between border-t-4 border-brand bg-surface p-6',
           compact ? 'min-h-[330px]' : 'min-h-[380px]',
         )}
       >
         <div>
-          <span className="mb-7 grid size-12 place-items-center bg-accent-strong text-foreground">
-            <Check className="size-5" aria-hidden="true" />
+          <span className="mb-8 grid size-12 place-items-center bg-signal text-foreground">
+            <Check className="size-5" strokeWidth={2.5} aria-hidden="true" />
           </span>
           <h3
             className={cn(
@@ -74,7 +74,7 @@ export function IdeaForm({
           >
             Идея уже у нас.
           </h3>
-          <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground">
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
             Мы внимательно изучим описание. Если увидим совпадение по опыту и
             потенциалу — напишем на указанную почту.
           </p>
@@ -83,8 +83,8 @@ export function IdeaForm({
           type="button"
           variant="outline"
           className={cn(
-            'rounded-none border-foreground/30 bg-transparent px-4',
-            compact ? 'h-12 w-full sm:w-fit' : 'w-fit',
+            'border-foreground/25 bg-transparent px-4 font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-foreground hover:text-white',
+            compact ? 'h-12 w-full sm:w-fit' : 'h-11 w-fit',
           )}
           onClick={() => setState('idle')}
         >
@@ -142,7 +142,7 @@ export function IdeaForm({
       <label className="field-label">
         <span className="flex items-center justify-between">
           <span>Идея или проблема</span>
-          <span className="font-mono text-[10px] tracking-normal">
+          <span className="font-mono text-[10px] tracking-normal text-brand">
             {ideaLength} / 5000
           </span>
         </span>
@@ -155,7 +155,7 @@ export function IdeaForm({
           onChange={(event) => setIdeaLength(event.target.value.length)}
           placeholder="Кто сталкивается с проблемой? Как её решают сейчас? Что можно сделать лучше?"
           className={cn(
-            'resize-y rounded-none border-0 border-b border-foreground/25 bg-transparent px-0 py-4 text-base leading-relaxed normal-case tracking-normal shadow-none focus-visible:border-foreground focus-visible:ring-0',
+            'resize-y rounded-[0.25rem] border border-input bg-surface px-4 py-3 text-base leading-relaxed normal-case tracking-normal shadow-none focus-visible:border-brand focus-visible:ring-3 focus-visible:ring-brand/20',
             compact ? 'min-h-36' : 'min-h-40',
           )}
         />
@@ -168,7 +168,7 @@ export function IdeaForm({
         )}
       >
         <div className="max-w-[290px]">
-          <p className="text-xs leading-relaxed text-muted-foreground">
+          <p className="font-mono text-[10px] leading-relaxed text-muted-foreground">
             Нажимая «Отправить», вы соглашаетесь на обработку контактных данных.
           </p>
           {error ? (
@@ -185,7 +185,7 @@ export function IdeaForm({
           size="lg"
           disabled={state === 'submitting'}
           className={cn(
-            'h-13 min-w-[180px] rounded-none bg-foreground px-6 text-background hover:bg-accent-strong hover:text-foreground',
+            'h-13 min-w-[190px] bg-brand px-6 font-mono text-[11px] uppercase tracking-[0.06em] text-white hover:bg-foreground',
             compact && 'h-14 w-full text-base',
           )}
         >

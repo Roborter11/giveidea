@@ -1,28 +1,28 @@
 import type { Metadata } from 'next';
-import { Geist, Lora } from 'next/font/google';
+import { IBM_Plex_Mono, Manrope } from 'next/font/google';
 
 import './globals.css';
 
-const geist = Geist({
-  variable: '--font-geist',
+const manrope = Manrope({
+  variable: '--font-manrope',
   subsets: ['cyrillic', 'latin'],
 });
 
-const lora = Lora({
-  variable: '--font-lora',
+const plexMono = IBM_Plex_Mono({
+  variable: '--font-plex-mono',
   subsets: ['cyrillic', 'latin'],
-  style: ['italic'],
+  weight: ['400', '500', '600'],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sut-product-ideas.roborter.chatgpt.site'),
-  title: 'Суть — идеи, из которых растут продукты',
+  title: 'Суть — превращаем идеи в продукты',
   description:
-    'Поделитесь идеей или проблемой — мы изучим её и соберём команду для запуска SaaS или B2B-продукта.',
+    'Опишите реальную проблему. Мы проверим гипотезу и соберём SaaS или B2B-продукт.',
   openGraph: {
-    title: 'Есть проблема? Сделаем продукт.',
+    title: 'Не храните идею в заметках.',
     description:
-      'Суть — студия цифровых продуктов. Расскажите о проблеме или идее, которую стоит превратить в сервис.',
+      'Суть — продуктовая лаборатория. Передайте нам проблему, которую стоит решить.',
     type: 'website',
     locale: 'ru_RU',
     images: [
@@ -30,14 +30,14 @@ export const metadata: Metadata = {
         url: '/og.png',
         width: 1200,
         height: 630,
-        alt: 'Есть проблема? Сделаем продукт.',
+        alt: 'Не храните идею в заметках.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Есть проблема? Сделаем продукт.',
-    description: 'Суть — студия цифровых продуктов.',
+    title: 'Не храните идею в заметках.',
+    description: 'Суть — продуктовая лаборатория.',
     images: ['/og.png'],
   },
 };
@@ -49,7 +49,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${geist.variable} ${lora.variable}`}>{children}</body>
+      <body className={`${manrope.variable} ${plexMono.variable}`}>
+        {children}
+      </body>
     </html>
   );
 }

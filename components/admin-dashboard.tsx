@@ -5,7 +5,7 @@ import {
   Archive,
   ArrowLeft,
   ArrowUpRight,
-  CheckCircle2,
+  Check,
   Inbox,
   LoaderCircle,
   LockKeyhole,
@@ -33,6 +33,12 @@ const statusLabels: Record<IdeaStatus, string> = {
   new: 'Новая',
   reviewed: 'Изучена',
   archived: 'Архив',
+};
+
+const statusTone: Record<IdeaStatus, string> = {
+  new: 'bg-signal text-foreground',
+  reviewed: 'bg-soft text-foreground',
+  archived: 'bg-muted text-muted-foreground',
 };
 
 export function AdminDashboard() {
@@ -110,48 +116,62 @@ export function AdminDashboard() {
     [filter, ideas],
   );
   const newCount = ideas.filter((idea) => idea.status === 'new').length;
+  const reviewedCount = ideas.filter(
+    (idea) => idea.status === 'reviewed',
+  ).length;
+  const archivedCount = ideas.filter(
+    (idea) => idea.status === 'archived',
+  ).length;
 
   if (view === 'loading') {
     return (
-      <main className="grid min-h-screen place-items-center bg-background">
-        <LoaderCircle className="size-5 animate-spin" aria-label="Загрузка" />
+      <main className="grid min-h-screen place-items-center bg-foreground text-white">
+        <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em]">
+          <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+          Загружаем идеи
+        </div>
       </main>
     );
   }
 
   if (view === 'login') {
     return (
-      <main className="grid min-h-screen bg-background lg:grid-cols-2">
-        <section className="flex min-h-[34svh] flex-col justify-between border-b border-foreground/15 bg-foreground p-5 text-background sm:min-h-[38vh] sm:p-10 lg:min-h-screen lg:border-b-0 lg:border-r lg:p-12">
-          <a href="/" className="flex items-center gap-2 text-sm">
+      <main className="min-h-screen bg-surface lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(440px,0.9fr)]">
+        <section className="blueprint-rule flex min-h-[36svh] flex-col justify-between bg-brand p-5 text-white sm:min-h-[42vh] sm:p-10 lg:min-h-screen lg:p-12">
+          <a
+            href="/"
+            className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-white/75 hover:text-white"
+          >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            На сайт
+            Вернуться на сайт
           </a>
           <div>
-            <p className="mb-5 text-xs uppercase tracking-[0.15em] text-background/55">
-              Закрытый раздел
+            <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.16em] text-white/60">
+              Закрытый контур / 01
             </p>
-            <h1 className="max-w-xl text-[clamp(3.5rem,7vw,7rem)] font-medium leading-[0.88] tracking-[-0.075em]">
-              Вход для команды<span className="text-accent-strong">.</span>
+            <h1 className="max-w-3xl text-[clamp(3.6rem,8vw,8rem)] font-semibold leading-[0.84] tracking-[-0.075em]">
+              Вход для команды.
             </h1>
           </div>
         </section>
 
-        <section className="flex items-center px-5 py-10 sm:p-10 lg:p-16">
+        <section className="flex items-center px-5 py-12 sm:px-10 lg:px-14">
           <form className="mx-auto w-full max-w-md" onSubmit={handleLogin}>
-            <LockKeyhole
-              className="mb-8 size-8"
-              strokeWidth={1.5}
-              aria-hidden="true"
-            />
-            <h2 className="text-3xl font-medium tracking-[-0.045em]">
+            <span className="mb-9 grid size-12 place-items-center bg-foreground text-white">
+              <LockKeyhole className="size-5" aria-hidden="true" />
+            </span>
+            <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand">
+              Авторизация
+            </p>
+            <h2 className="mt-3 text-4xl font-semibold tracking-[-0.055em]">
               Введите пароль
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Заявки содержат личные данные и доступны только администраторам.
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Здесь находятся контакты и описания идей. Доступ есть только у
+              администраторов.
             </p>
-            <label className="field-label mt-9">
-              <span>Пароль</span>
+            <label className="field-label mt-10">
+              <span>Пароль администратора</span>
               <Input
                 id="admin-password"
                 name="password"
@@ -170,7 +190,7 @@ export function AdminDashboard() {
             <Button
               type="submit"
               disabled={isLoggingIn}
-              className="mt-7 h-12 w-full rounded-none"
+              className="mt-7 h-13 w-full bg-brand font-mono text-[11px] uppercase tracking-[0.08em] text-white hover:bg-foreground"
             >
               {isLoggingIn ? (
                 <LoaderCircle
@@ -178,7 +198,7 @@ export function AdminDashboard() {
                   aria-hidden="true"
                 />
               ) : null}
-              Войти
+              Открыть панель
             </Button>
           </form>
         </section>
@@ -188,145 +208,182 @@ export function AdminDashboard() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 border-b border-foreground/15 bg-background px-5 py-4 sm:px-8 lg:static lg:px-12 lg:py-5">
-        <div className="mx-auto flex max-w-[1480px] items-center justify-between">
-          <a href="/" className="text-lg font-semibold tracking-[-0.04em]">
-            Суть<span className="text-accent-strong">.</span>
-          </a>
-          <Button variant="ghost" size="sm" onClick={logout}>
+      <header className="sticky top-0 z-40 flex h-[68px] items-stretch bg-foreground text-white">
+        <a
+          href="/"
+          className="flex w-[132px] items-center border-r border-white/20 px-5 font-mono text-sm font-semibold tracking-[0.12em] sm:w-[190px] sm:px-8"
+        >
+          СУТЬ<span className="text-signal">/</span>
+        </a>
+        <div className="flex flex-1 items-center justify-between px-5 sm:px-8">
+          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/55">
+            <span className="sm:hidden">Admin</span>
+            <span className="hidden sm:inline">Панель администратора</span>
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={logout}
+            className="font-mono text-[10px] uppercase tracking-[0.1em] text-white hover:bg-white/10 hover:text-white"
+          >
             <LogOut className="size-3.5" aria-hidden="true" />
             Выйти
           </Button>
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1480px] px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-14">
-        <div className="mb-8 grid gap-6 border-b border-foreground/15 pb-8 sm:mb-12 sm:gap-7 sm:pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div className="lg:grid lg:min-h-[calc(100vh-68px)] lg:grid-cols-[280px_minmax(0,1fr)]">
+        <aside className="bg-brand px-5 py-7 text-white sm:px-8 lg:sticky lg:top-[68px] lg:flex lg:h-[calc(100vh-68px)] lg:flex-col lg:justify-between lg:p-8">
           <div>
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-              Панель администратора
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/60">
+              Сводка
             </p>
-            <h1 className="text-[clamp(2.75rem,12vw,6.5rem)] font-medium leading-[0.94] tracking-[-0.07em]">
-              Входящие идеи
-              <sup className="ml-3 align-top font-mono text-sm font-normal tracking-normal text-muted-foreground">
-                {String(newCount).padStart(2, '0')}
-              </sup>
-            </h1>
-          </div>
-          <div className="grid w-full grid-cols-2 border border-foreground/20 p-1 text-xs font-medium uppercase tracking-[0.08em] sm:flex sm:w-fit">
-            <button
-              type="button"
-              className={`min-h-10 px-4 py-2 ${filter === 'active' ? 'bg-foreground text-background' : ''}`}
-              onClick={() => setFilter('active')}
-            >
-              Активные
-            </button>
-            <button
-              type="button"
-              className={`min-h-10 px-4 py-2 ${filter === 'all' ? 'bg-foreground text-background' : ''}`}
-              onClick={() => setFilter('all')}
-            >
-              Все
-            </button>
-          </div>
-        </div>
-
-        {visibleIdeas.length === 0 ? (
-          <div className="grid min-h-[300px] place-items-center border border-dashed border-foreground/25 px-5 text-center sm:min-h-[360px]">
-            <div>
-              <Inbox
-                className="mx-auto mb-4 size-7"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              />
-              <p className="text-lg font-medium">Здесь пока тихо</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Новые заявки появятся в этом разделе.
-              </p>
+            <div className="mt-5 grid grid-cols-3 gap-px bg-white/20 lg:grid-cols-1">
+              {[
+                ['Новые', newCount],
+                ['Изучены', reviewedCount],
+                ['Архив', archivedCount],
+              ].map(([label, value]) => (
+                <div key={label} className="bg-brand py-3 lg:py-5">
+                  <span className="block font-mono text-[9px] uppercase tracking-[0.12em] text-white/55">
+                    {label}
+                  </span>
+                  <strong className="mt-1 block text-2xl font-semibold tracking-[-0.04em] lg:text-4xl">
+                    {String(value).padStart(2, '0')}
+                  </strong>
+                </div>
+              ))}
             </div>
           </div>
-        ) : (
-          <div className="divide-y divide-foreground/15 border-y border-foreground/15">
-            {visibleIdeas.map((idea, index) => (
-              <article
-                key={idea.id}
-                className={`grid gap-5 py-7 sm:gap-7 sm:py-8 lg:grid-cols-[72px_180px_minmax(0,1fr)_180px] lg:py-10 ${idea.status === 'archived' ? 'opacity-50' : ''}`}
+          <p className="mt-8 hidden font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-white/45 lg:block">
+            Новые заявки появляются здесь автоматически
+          </p>
+        </aside>
+
+        <section className="px-5 py-8 sm:px-8 sm:py-10 lg:px-10 xl:px-14 xl:py-12">
+          <div className="mb-8 flex flex-col gap-6 border-b border-foreground/18 pb-8 sm:flex-row sm:items-end sm:justify-between lg:mb-10">
+            <div>
+              <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.15em] text-brand">
+                Рабочая очередь
+              </p>
+              <h1 className="text-[clamp(3rem,6vw,6rem)] font-semibold leading-[0.88] tracking-[-0.07em]">
+                Входящие идеи
+              </h1>
+            </div>
+            <div className="grid grid-cols-2 border border-foreground/25 bg-surface p-1 font-mono text-[10px] uppercase tracking-[0.08em]">
+              <button
+                type="button"
+                className={`min-h-10 px-5 ${filter === 'active' ? 'bg-foreground text-white' : 'hover:bg-muted'}`}
+                onClick={() => setFilter('active')}
               >
-                <div className="flex items-center justify-between lg:hidden">
-                  <span className="font-mono text-xs text-muted-foreground">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <span className="bg-accent-strong px-2 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-foreground">
-                    {statusLabels[idea.status]}
-                  </span>
-                </div>
-                <div className="hidden font-mono text-xs text-muted-foreground lg:block">
-                  {String(index + 1).padStart(2, '0')}
-                </div>
-                <div>
-                  <p className="font-medium">{idea.name}</p>
-                  <a
-                    href={`mailto:${idea.email}`}
-                    className="mt-1 inline-flex max-w-full items-center gap-1 break-all text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    {idea.email}
-                    <ArrowUpRight className="size-3" aria-hidden="true" />
-                  </a>
-                  <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
-                    {new Intl.DateTimeFormat('ru-RU', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    }).format(new Date(idea.createdAt))}
-                  </p>
-                </div>
-                <div>
-                  <span className="mb-4 hidden bg-accent-strong px-2 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-foreground lg:inline-block">
-                    {statusLabels[idea.status]}
-                  </span>
-                  <p className="max-w-3xl whitespace-pre-wrap text-base leading-relaxed sm:text-lg">
-                    {idea.idea}
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-2 lg:flex lg:flex-col lg:items-stretch">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={
-                      updatingId === idea.id || idea.status === 'reviewed'
-                    }
-                    className="min-h-11 rounded-none bg-transparent lg:min-h-0"
-                    onClick={() => updateStatus(idea.id, 'reviewed')}
-                  >
-                    <CheckCircle2 className="size-3.5" aria-hidden="true" />
-                    Изучена
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={
-                      updatingId === idea.id || idea.status === 'archived'
-                    }
-                    className="min-h-11 rounded-none bg-transparent lg:min-h-0"
-                    onClick={() => updateStatus(idea.id, 'archived')}
-                  >
-                    <Archive className="size-3.5" aria-hidden="true" />
-                    В архив
-                  </Button>
-                  <a
-                    href={`mailto:${idea.email}`}
-                    className="col-span-2 inline-flex min-h-11 items-center justify-center gap-1 rounded-none px-2.5 text-[0.8rem] font-medium hover:bg-muted lg:min-h-7 lg:justify-start"
-                  >
-                    <Mail className="size-3.5" aria-hidden="true" />
-                    Ответить
-                  </a>
-                </div>
-              </article>
-            ))}
+                Активные
+              </button>
+              <button
+                type="button"
+                className={`min-h-10 px-5 ${filter === 'all' ? 'bg-foreground text-white' : 'hover:bg-muted'}`}
+                onClick={() => setFilter('all')}
+              >
+                Все
+              </button>
+            </div>
           </div>
-        )}
+
+          {visibleIdeas.length === 0 ? (
+            <div className="grid min-h-[360px] place-items-center border border-foreground/20 bg-surface px-5 text-center">
+              <div>
+                <span className="mx-auto mb-5 grid size-12 place-items-center bg-soft">
+                  <Inbox className="size-5" aria-hidden="true" />
+                </span>
+                <p className="text-xl font-semibold">В очереди пока пусто</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Новые идеи появятся здесь автоматически.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {visibleIdeas.map((idea, index) => (
+                <article
+                  key={idea.id}
+                  className={`border border-foreground/20 bg-surface ${idea.status === 'archived' ? 'opacity-55' : ''}`}
+                >
+                  <div className="flex items-center justify-between border-b border-foreground/15 px-4 py-3 sm:px-5">
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-[10px] text-muted-foreground">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span
+                        className={`px-2 py-1 font-mono text-[9px] uppercase tracking-[0.08em] ${statusTone[idea.status]}`}
+                      >
+                        {statusLabels[idea.status]}
+                      </span>
+                    </div>
+                    <time className="font-mono text-[9px] uppercase tracking-[0.06em] text-muted-foreground">
+                      {new Intl.DateTimeFormat('ru-RU', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      }).format(new Date(idea.createdAt))}
+                    </time>
+                  </div>
+
+                  <div className="grid gap-7 p-5 sm:p-6 xl:grid-cols-[200px_minmax(0,1fr)_150px]">
+                    <div>
+                      <p className="text-lg font-semibold tracking-[-0.025em]">
+                        {idea.name}
+                      </p>
+                      <a
+                        href={`mailto:${idea.email}`}
+                        className="mt-2 inline-flex max-w-full items-center gap-1 break-all font-mono text-[10px] text-brand hover:underline"
+                      >
+                        {idea.email}
+                        <ArrowUpRight className="size-3" aria-hidden="true" />
+                      </a>
+                    </div>
+
+                    <p className="max-w-3xl whitespace-pre-wrap text-base leading-relaxed">
+                      {idea.idea}
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-2 xl:flex xl:flex-col">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={
+                          updatingId === idea.id || idea.status === 'reviewed'
+                        }
+                        className="min-h-11 border-foreground/25 bg-transparent font-mono text-[10px] uppercase xl:min-h-0"
+                        onClick={() => updateStatus(idea.id, 'reviewed')}
+                      >
+                        <Check className="size-3.5" aria-hidden="true" />
+                        Изучена
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={
+                          updatingId === idea.id || idea.status === 'archived'
+                        }
+                        className="min-h-11 border-foreground/25 bg-transparent font-mono text-[10px] uppercase xl:min-h-0"
+                        onClick={() => updateStatus(idea.id, 'archived')}
+                      >
+                        <Archive className="size-3.5" aria-hidden="true" />
+                        Архив
+                      </Button>
+                      <a
+                        href={`mailto:${idea.email}`}
+                        className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 bg-foreground px-3 font-mono text-[10px] uppercase text-white hover:bg-brand xl:min-h-8"
+                      >
+                        <Mail className="size-3.5" aria-hidden="true" />
+                        Ответить
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </main>
   );
