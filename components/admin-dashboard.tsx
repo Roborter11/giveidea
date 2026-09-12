@@ -122,7 +122,7 @@ export function AdminDashboard() {
   if (view === 'login') {
     return (
       <main className="grid min-h-screen bg-background lg:grid-cols-2">
-        <section className="flex min-h-[38vh] flex-col justify-between border-b border-foreground/15 bg-foreground p-6 text-background sm:p-10 lg:min-h-screen lg:border-b-0 lg:border-r lg:p-12">
+        <section className="flex min-h-[34svh] flex-col justify-between border-b border-foreground/15 bg-foreground p-5 text-background sm:min-h-[38vh] sm:p-10 lg:min-h-screen lg:border-b-0 lg:border-r lg:p-12">
           <a href="/" className="flex items-center gap-2 text-sm">
             <ArrowLeft className="size-4" aria-hidden="true" />
             На сайт
@@ -137,7 +137,7 @@ export function AdminDashboard() {
           </div>
         </section>
 
-        <section className="flex items-center p-6 sm:p-10 lg:p-16">
+        <section className="flex items-center px-5 py-10 sm:p-10 lg:p-16">
           <form className="mx-auto w-full max-w-md" onSubmit={handleLogin}>
             <LockKeyhole
               className="mb-8 size-8"
@@ -187,7 +187,7 @@ export function AdminDashboard() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b border-foreground/15 px-5 py-5 sm:px-8 lg:px-12">
+      <header className="sticky top-0 z-40 border-b border-foreground/15 bg-background px-5 py-4 sm:px-8 lg:static lg:px-12 lg:py-5">
         <div className="mx-auto flex max-w-[1480px] items-center justify-between">
           <a href="/" className="text-lg font-semibold tracking-[-0.04em]">
             Суть<span className="text-accent-strong">.</span>
@@ -199,30 +199,30 @@ export function AdminDashboard() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1480px] px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
-        <div className="mb-12 grid gap-7 border-b border-foreground/15 pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div className="mx-auto max-w-[1480px] px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-14">
+        <div className="mb-8 grid gap-6 border-b border-foreground/15 pb-8 sm:mb-12 sm:gap-7 sm:pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <p className="mb-3 text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
               Панель администратора
             </p>
-            <h1 className="text-[clamp(3rem,6vw,6.5rem)] font-medium leading-none tracking-[-0.07em]">
+            <h1 className="text-[clamp(2.75rem,12vw,6.5rem)] font-medium leading-[0.94] tracking-[-0.07em]">
               Входящие идеи
               <sup className="ml-3 align-top font-mono text-sm font-normal tracking-normal text-muted-foreground">
                 {String(newCount).padStart(2, '0')}
               </sup>
             </h1>
           </div>
-          <div className="flex border border-foreground/20 p-1 text-xs font-medium uppercase tracking-[0.08em]">
+          <div className="grid w-full grid-cols-2 border border-foreground/20 p-1 text-xs font-medium uppercase tracking-[0.08em] sm:flex sm:w-fit">
             <button
               type="button"
-              className={`px-4 py-2 ${filter === 'active' ? 'bg-foreground text-background' : ''}`}
+              className={`min-h-10 px-4 py-2 ${filter === 'active' ? 'bg-foreground text-background' : ''}`}
               onClick={() => setFilter('active')}
             >
               Активные
             </button>
             <button
               type="button"
-              className={`px-4 py-2 ${filter === 'all' ? 'bg-foreground text-background' : ''}`}
+              className={`min-h-10 px-4 py-2 ${filter === 'all' ? 'bg-foreground text-background' : ''}`}
               onClick={() => setFilter('all')}
             >
               Все
@@ -231,7 +231,7 @@ export function AdminDashboard() {
         </div>
 
         {visibleIdeas.length === 0 ? (
-          <div className="grid min-h-[360px] place-items-center border border-dashed border-foreground/25 text-center">
+          <div className="grid min-h-[300px] place-items-center border border-dashed border-foreground/25 px-5 text-center sm:min-h-[360px]">
             <div>
               <Inbox
                 className="mx-auto mb-4 size-7"
@@ -249,16 +249,24 @@ export function AdminDashboard() {
             {visibleIdeas.map((idea, index) => (
               <article
                 key={idea.id}
-                className={`grid gap-7 py-8 lg:grid-cols-[72px_180px_minmax(0,1fr)_180px] lg:py-10 ${idea.status === 'archived' ? 'opacity-50' : ''}`}
+                className={`grid gap-5 py-7 sm:gap-7 sm:py-8 lg:grid-cols-[72px_180px_minmax(0,1fr)_180px] lg:py-10 ${idea.status === 'archived' ? 'opacity-50' : ''}`}
               >
-                <div className="font-mono text-xs text-muted-foreground">
+                <div className="flex items-center justify-between lg:hidden">
+                  <span className="font-mono text-xs text-muted-foreground">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className="bg-accent-strong px-2 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-foreground">
+                    {statusLabels[idea.status]}
+                  </span>
+                </div>
+                <div className="hidden font-mono text-xs text-muted-foreground lg:block">
                   {String(index + 1).padStart(2, '0')}
                 </div>
                 <div>
                   <p className="font-medium">{idea.name}</p>
                   <a
                     href={`mailto:${idea.email}`}
-                    className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+                    className="mt-1 inline-flex max-w-full items-center gap-1 break-all text-sm text-muted-foreground hover:text-foreground"
                   >
                     {idea.email}
                     <ArrowUpRight className="size-3" aria-hidden="true" />
@@ -274,21 +282,21 @@ export function AdminDashboard() {
                   </p>
                 </div>
                 <div>
-                  <span className="mb-4 inline-block bg-accent-strong px-2 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-foreground">
+                  <span className="mb-4 hidden bg-accent-strong px-2 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-foreground lg:inline-block">
                     {statusLabels[idea.status]}
                   </span>
                   <p className="max-w-3xl whitespace-pre-wrap text-base leading-relaxed sm:text-lg">
                     {idea.idea}
                   </p>
                 </div>
-                <div className="flex flex-row gap-2 lg:flex-col lg:items-stretch">
+                <div className="grid grid-cols-2 gap-2 lg:flex lg:flex-col lg:items-stretch">
                   <Button
                     variant="outline"
                     size="sm"
                     disabled={
                       updatingId === idea.id || idea.status === 'reviewed'
                     }
-                    className="rounded-none bg-transparent"
+                    className="min-h-11 rounded-none bg-transparent lg:min-h-0"
                     onClick={() => updateStatus(idea.id, 'reviewed')}
                   >
                     <CheckCircle2 className="size-3.5" aria-hidden="true" />
@@ -300,7 +308,7 @@ export function AdminDashboard() {
                     disabled={
                       updatingId === idea.id || idea.status === 'archived'
                     }
-                    className="rounded-none bg-transparent"
+                    className="min-h-11 rounded-none bg-transparent lg:min-h-0"
                     onClick={() => updateStatus(idea.id, 'archived')}
                   >
                     <Archive className="size-3.5" aria-hidden="true" />
@@ -308,7 +316,7 @@ export function AdminDashboard() {
                   </Button>
                   <a
                     href={`mailto:${idea.email}`}
-                    className="inline-flex h-7 items-center justify-start gap-1 rounded-none px-2.5 text-[0.8rem] font-medium hover:bg-muted"
+                    className="col-span-2 inline-flex min-h-11 items-center justify-center gap-1 rounded-none px-2.5 text-[0.8rem] font-medium hover:bg-muted lg:min-h-7 lg:justify-start"
                   >
                     <Mail className="size-3.5" aria-hidden="true" />
                     Ответить
