@@ -153,6 +153,7 @@ export function AdminDashboard() {
             <label className="field-label mt-9">
               <span>Пароль</span>
               <Input
+                id="admin-password"
                 name="password"
                 type="password"
                 required

@@ -109,6 +109,7 @@ export function IdeaForm({
         <label className="field-label">
           <span>Ваше имя</span>
           <Input
+            id={`${formId}-name`}
             name="name"
             autoComplete="name"
             required
@@ -121,6 +122,7 @@ export function IdeaForm({
         <label className="field-label">
           <span>Почта</span>
           <Input
+            id={`${formId}-email`}
             name="email"
             type="email"
             autoComplete="email"
@@ -145,6 +147,7 @@ export function IdeaForm({
           </span>
         </span>
         <Textarea
+          id={`${formId}-idea`}
           name="idea"
           required
           minLength={20}
