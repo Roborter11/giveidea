@@ -84,12 +84,12 @@ type Messages = {
 export const messages: Record<Locale, Messages> = {
   uk: {
     meta: {
-      homeTitle: 'Суть — ідеї, з яких виростають продукти',
+      homeTitle: 'giveidea — ідеї, з яких виростають продукти',
       homeDescription:
         'Опишіть ідею та залиште контакти. Ми вивчимо заявку й напишемо, якщо зможемо допомогти.',
-      adminTitle: 'Вхідні ідеї — Суть',
+      adminTitle: 'Вхідні ідеї — giveidea',
     },
-    common: { brand: 'Суть', language: 'Мова', team: 'Для команди' },
+    common: { brand: 'giveidea', language: 'Мова', team: 'Для команди' },
     home: {
       headline: 'Є ідея? Розкажіть.',
       description:
@@ -146,12 +146,12 @@ export const messages: Record<Locale, Messages> = {
   },
   en: {
     meta: {
-      homeTitle: 'Sut — ideas that become products',
+      homeTitle: 'giveidea — ideas that become products',
       homeDescription:
         'Describe your idea and leave your contact details. We will review it and get in touch if we can help.',
-      adminTitle: 'Incoming ideas — Sut',
+      adminTitle: 'Incoming ideas — giveidea',
     },
-    common: { brand: 'Sut', language: 'Language', team: 'For the team' },
+    common: { brand: 'giveidea', language: 'Language', team: 'For the team' },
     home: {
       headline: 'Have an idea? Tell us.',
       description:
@@ -210,12 +210,12 @@ export const messages: Record<Locale, Messages> = {
   },
   ru: {
     meta: {
-      homeTitle: 'Суть — идеи, из которых растут продукты',
+      homeTitle: 'giveidea — идеи, из которых растут продукты',
       homeDescription:
         'Опишите идею и оставьте контакты. Мы изучим заявку и напишем, если сможем помочь.',
-      adminTitle: 'Входящие идеи — Суть',
+      adminTitle: 'Входящие идеи — giveidea',
     },
-    common: { brand: 'Суть', language: 'Язык', team: 'Для команды' },
+    common: { brand: 'giveidea', language: 'Язык', team: 'Для команды' },
     home: {
       headline: 'Есть идея? Расскажите.',
       description:
@@ -272,12 +272,12 @@ export const messages: Record<Locale, Messages> = {
   },
   de: {
     meta: {
-      homeTitle: 'Sut — Ideen, aus denen Produkte entstehen',
+      homeTitle: 'giveidea — Ideen, aus denen Produkte entstehen',
       homeDescription:
         'Beschreiben Sie Ihre Idee und hinterlassen Sie Ihre Kontaktdaten. Wir prüfen Ihre Anfrage und melden uns, wenn wir helfen können.',
-      adminTitle: 'Eingehende Ideen — Sut',
+      adminTitle: 'Eingehende Ideen — giveidea',
     },
-    common: { brand: 'Sut', language: 'Sprache', team: 'Für das Team' },
+    common: { brand: 'giveidea', language: 'Sprache', team: 'Für das Team' },
     home: {
       headline: 'Eine Idee? Erzählen Sie uns davon.',
       description:
@@ -337,12 +337,12 @@ export const messages: Record<Locale, Messages> = {
   },
   es: {
     meta: {
-      homeTitle: 'Sut — ideas que se convierten en productos',
+      homeTitle: 'giveidea — ideas que se convierten en productos',
       homeDescription:
         'Describe tu idea y deja tus datos de contacto. La revisaremos y te escribiremos si podemos ayudarte.',
-      adminTitle: 'Ideas recibidas — Sut',
+      adminTitle: 'Ideas recibidas — giveidea',
     },
-    common: { brand: 'Sut', language: 'Idioma', team: 'Para el equipo' },
+    common: { brand: 'giveidea', language: 'Idioma', team: 'Para el equipo' },
     home: {
       headline: '¿Tienes una idea? Cuéntanosla.',
       description:
@@ -401,12 +401,12 @@ export const messages: Record<Locale, Messages> = {
   },
   fr: {
     meta: {
-      homeTitle: 'Sut — des idées qui deviennent des produits',
+      homeTitle: 'giveidea — des idées qui deviennent des produits',
       homeDescription:
         'Décrivez votre idée et laissez vos coordonnées. Nous l’étudierons et vous contacterons si nous pouvons vous aider.',
-      adminTitle: 'Idées reçues — Sut',
+      adminTitle: 'Idées reçues — giveidea',
     },
-    common: { brand: 'Sut', language: 'Langue', team: 'Pour l’équipe' },
+    common: { brand: 'giveidea', language: 'Langue', team: 'Pour l’équipe' },
     home: {
       headline: 'Une idée ? Parlez-nous-en.',
       description:

@@ -16,7 +16,7 @@ export default function Home() {
   useLocalizedDocument({
     title: t.meta.homeTitle,
     description: t.meta.homeDescription,
-    socialTitle: t.home.headline,
+    socialTitle: `${t.common.brand} — ${t.home.headline}`,
     locale,
   });
 

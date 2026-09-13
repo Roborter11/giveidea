@@ -12,12 +12,12 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sut-product-ideas.roborter.chatgpt.site'),
-  title: 'Суть — идеи, из которых растут продукты',
+  title: 'giveidea — идеи, из которых растут продукты',
   description:
     'Опишите идею и оставьте контакты. Мы изучим заявку и напишем, если сможем помочь.',
   openGraph: {
-    title: 'Есть идея? Расскажите.',
-    description: 'Суть — идеи, из которых растут продукты.',
+    title: 'giveidea — Есть идея? Расскажите.',
+    description: 'giveidea — идеи, из которых растут продукты.',
     type: 'website',
     locale: 'ru_RU',
     images: [
@@ -25,14 +25,14 @@ export const metadata: Metadata = {
         url: '/og.png',
         width: 1200,
         height: 630,
-        alt: 'Есть идея? Расскажите.',
+        alt: 'giveidea — Есть идея? Расскажите.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Есть идея? Расскажите.',
-    description: 'Суть — идеи, из которых растут продукты.',
+    title: 'giveidea — Есть идея? Расскажите.',
+    description: 'giveidea — идеи, из которых растут продукты.',
     images: ['/og.png'],
   },
 };
