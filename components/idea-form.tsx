@@ -14,6 +14,7 @@ export function IdeaForm({ formId = 'idea-form' }: { formId?: string }) {
   const { locale, t } = useLanguage();
   const [state, setState] = useState<FormState>('idle');
   const [error, setError] = useState('');
+  const [validationAttempted, setValidationAttempted] = useState(false);
 
   async function handleSubmit(
     event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
@@ -38,6 +39,7 @@ export function IdeaForm({ formId = 'idea-form' }: { formId?: string }) {
       }
 
       form.reset();
+      setValidationAttempted(false);
       setState('success');
     } catch (caughtError) {
       setError(
@@ -74,7 +76,13 @@ export function IdeaForm({ formId = 'idea-form' }: { formId?: string }) {
   }
 
   return (
-    <form id={formId} className="space-y-5" onSubmit={handleSubmit}>
+    <form
+      id={formId}
+      className="space-y-5"
+      data-validation={validationAttempted ? 'attempted' : 'idle'}
+      onInvalidCapture={() => setValidationAttempted(true)}
+      onSubmit={handleSubmit}
+    >
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="field-label" htmlFor={`${formId}-name`}>
           <span>{t.form.name}</span>

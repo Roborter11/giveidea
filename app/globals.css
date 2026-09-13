@@ -128,6 +128,17 @@
   outline: none;
 }
 
+form[data-validation='attempted'] input:not([name='website']):invalid,
+form[data-validation='attempted'] textarea:invalid {
+  border-color: var(--destructive);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--destructive) 12%, transparent);
+}
+
+form[data-validation='attempted'] .field-label:has(input:invalid) > span,
+form[data-validation='attempted'] .field-label:has(textarea:invalid) > span {
+  color: var(--destructive);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
