@@ -31,14 +31,9 @@ function getClientLocale(): Locale {
   try {
     savedLocale = parseLocale(window.localStorage.getItem(STORAGE_KEY));
   } catch {
-    // The URL and browser language remain available when storage is blocked.
+    // The URL and default language remain available when storage is blocked.
   }
   if (savedLocale) return savedLocale;
-
-  for (const browserLanguage of window.navigator.languages) {
-    const detectedLocale = parseLocale(browserLanguage);
-    if (detectedLocale) return detectedLocale;
-  }
 
   return defaultLocale;
 }

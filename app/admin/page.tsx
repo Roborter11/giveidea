@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 
 import { AdminDashboard } from '@/components/admin-dashboard';
+import { defaultLocale, messages } from '@/lib/i18n';
 
 export const metadata: Metadata = {
-  title: 'Входящие идеи — giveidea',
+  title: messages[defaultLocale].meta.adminTitle,
   robots: { index: false, follow: false },
 };
 

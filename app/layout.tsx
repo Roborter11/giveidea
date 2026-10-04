@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
 
 import { LanguageProvider } from '@/components/language-provider';
+import { defaultLocale, messages, openGraphLocales } from '@/lib/i18n';
 
 import './globals.css';
 
@@ -10,17 +11,19 @@ const manrope = Manrope({
   subsets: ['cyrillic', 'latin'],
 });
 
+const defaultMessages = messages[defaultLocale];
+const socialTitle = `${defaultMessages.common.brand} — ${defaultMessages.home.headline}`;
+
 export const metadata: Metadata = {
   icons: { icon: { url: '/favicon.svg', type: 'image/svg+xml' } },
   metadataBase: new URL('https://sut-product-ideas.roborter.chatgpt.site'),
-  title: 'giveidea — идеи, из которых растут продукты',
-  description:
-    'Опишите идею и оставьте контакты. Мы изучим заявку и напишем, если сможем помочь.',
+  title: defaultMessages.meta.homeTitle,
+  description: defaultMessages.meta.homeDescription,
   openGraph: {
-    title: 'giveidea — Есть идея? Расскажите.',
-    description: 'giveidea — идеи, из которых растут продукты.',
+    title: socialTitle,
+    description: defaultMessages.meta.homeDescription,
     type: 'website',
-    locale: 'ru_RU',
+    locale: openGraphLocales[defaultLocale],
     images: [
       {
         url: '/og.png',
@@ -32,8 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'giveidea — Есть идея? Расскажите.',
-    description: 'giveidea — идеи, из которых растут продукты.',
+    title: socialTitle,
+    description: defaultMessages.meta.homeDescription,
     images: ['/og.png'],
   },
 };
@@ -44,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang={defaultLocale}>
       <body className={manrope.variable}>
         <LanguageProvider>{children}</LanguageProvider>
       </body>
