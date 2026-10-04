@@ -6,6 +6,7 @@ import {
   useLanguage,
   useLocalizedDocument,
 } from '@/components/language-provider';
+import { BrandLogo } from '@/components/brand-logo';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { IdeaForm } from '@/components/idea-form';
 import { localizedHref } from '@/lib/i18n';
@@ -26,10 +27,9 @@ export default function Home() {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
           <a
             href={localizedHref('/', locale)}
-            className="text-lg font-semibold tracking-[-0.04em]"
+            className="inline-flex shrink-0 items-center"
           >
-            {t.common.brand}
-            <span className="text-brand">.</span>
+            <BrandLogo />
           </a>
           <div className="flex items-center gap-3 sm:gap-5">
             <LanguageSwitcher />

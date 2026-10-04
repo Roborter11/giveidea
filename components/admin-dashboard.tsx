@@ -25,6 +25,7 @@ import {
   useLanguage,
   useLocalizedDocument,
 } from '@/components/language-provider';
+import { BrandLogo } from '@/components/brand-logo';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { dateLocales, localizedHref } from '@/lib/i18n';
 
@@ -192,10 +193,9 @@ export function AdminDashboard() {
           <form className="w-full max-w-sm" onSubmit={handleLogin}>
             <a
               href={localizedHref('/', locale)}
-              className="text-lg font-semibold tracking-[-0.04em]"
+              className="inline-flex shrink-0 items-center"
             >
-              {t.common.brand}
-              <span className="text-brand">.</span>
+              <BrandLogo />
             </a>
             <h1 className="mt-10 text-3xl font-semibold tracking-[-0.05em]">
               {t.admin.loginTitle}
@@ -244,10 +244,9 @@ export function AdminDashboard() {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
           <a
             href={localizedHref('/', locale)}
-            className="text-lg font-semibold tracking-[-0.04em]"
+            className="inline-flex shrink-0 items-center"
           >
-            {t.common.brand}
-            <span className="text-brand">.</span>
+            <BrandLogo />
           </a>
           <div className="flex items-center gap-2 sm:gap-3">
             <LanguageSwitcher />

@@ -11,6 +11,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
+  icons: { icon: { url: '/favicon.svg', type: 'image/svg+xml' } },
   metadataBase: new URL('https://sut-product-ideas.roborter.chatgpt.site'),
   title: 'giveidea — идеи, из которых растут продукты',
   description:
