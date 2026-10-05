@@ -1,5 +1,4 @@
-import { getDb, ensureIdeasSchema } from '@/db';
-import { ideas } from '@/db/schema';
+import { sendIdeaEmail } from '@/lib/idea-email';
 import { getMessages } from '@/lib/i18n';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -8,7 +7,22 @@ export async function POST(request: Request) {
   let requestLocale: unknown;
 
   try {
-    const body = (await request.json()) as {
+    let payload: unknown;
+    try {
+      payload = await request.json();
+    } catch {
+      return Response.json(
+        { error: getMessages(requestLocale).form.submitError },
+        { status: 400 },
+      );
+    }
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      return Response.json(
+        { error: getMessages(requestLocale).form.submitError },
+        { status: 400 },
+      );
+    }
+    const body = payload as {
       name?: unknown;
       email?: unknown;
       idea?: unknown;
@@ -38,19 +52,11 @@ export async function POST(request: Request) {
       return Response.json({ error: t.ideaError }, { status: 400 });
     }
 
-    await ensureIdeasSchema();
-    await getDb().insert(ideas).values({
-      id: crypto.randomUUID(),
-      name,
-      email,
-      idea,
-      status: 'new',
-      createdAt: new Date(),
-    });
+    await sendIdeaEmail({ name, email, idea });
 
     return Response.json({ ok: true }, { status: 201 });
   } catch (error) {
-    console.error('Failed to save idea', error);
+    console.error('Failed to email idea', error);
     return Response.json(
       { error: getMessages(requestLocale).form.submitError },
       { status: 500 },

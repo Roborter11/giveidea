@@ -264,6 +264,9 @@ export function AdminDashboard() {
       </header>
 
       <section className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
+        <p className="mb-6 text-sm text-muted-foreground">
+          {t.admin.deliveryNotice}
+        </p>
         <div className="flex flex-col gap-5 border-b border-foreground/10 pb-7 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">

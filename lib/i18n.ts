@@ -62,6 +62,7 @@ type Messages = {
     login: string;
     logout: string;
     ideas: string;
+    deliveryNotice: string;
     noNewIdeas: string;
     newIdeasCount: (count: number) => string;
     active: string;
@@ -126,12 +127,14 @@ export const messages: Record<Locale, Messages> = {
       login: 'Увійти',
       logout: 'Вийти',
       ideas: 'Ідеї',
+      deliveryNotice:
+        'Нові ідеї надходять на пошту. Тут зберігаються попередні заявки.',
       noNewIdeas: 'Нових заявок немає',
       newIdeasCount: (count) => `Нових заявок: ${count}`,
       active: 'Активні',
       all: 'Усі',
       emptyTitle: 'Тут поки порожньо',
-      emptyDescription: 'Нові ідеї з’являться автоматично.',
+      emptyDescription: 'Попередніх заявок у цьому списку немає.',
       statusNew: 'Нова',
       statusReviewed: 'Опрацьована',
       statusArchived: 'Архів',
@@ -189,12 +192,14 @@ export const messages: Record<Locale, Messages> = {
       login: 'Sign in',
       logout: 'Sign out',
       ideas: 'Ideas',
+      deliveryNotice:
+        'New ideas are sent by email. Previous submissions remain here.',
       noNewIdeas: 'No new submissions',
       newIdeasCount: (count) => `New submissions: ${count}`,
       active: 'Active',
       all: 'All',
       emptyTitle: 'Nothing here yet',
-      emptyDescription: 'New ideas will appear automatically.',
+      emptyDescription: 'There are no previous submissions in this list.',
       statusNew: 'New',
       statusReviewed: 'Reviewed',
       statusArchived: 'Archived',
@@ -252,12 +257,14 @@ export const messages: Record<Locale, Messages> = {
       login: 'Войти',
       logout: 'Выйти',
       ideas: 'Идеи',
+      deliveryNotice:
+        'Новые идеи приходят на почту. Здесь хранятся прежние заявки.',
       noNewIdeas: 'Новых заявок нет',
       newIdeasCount: (count) => `Новых заявок: ${count}`,
       active: 'Активные',
       all: 'Все',
       emptyTitle: 'Здесь пока пусто',
-      emptyDescription: 'Новые идеи появятся автоматически.',
+      emptyDescription: 'Прежних заявок в этом списке нет.',
       statusNew: 'Новая',
       statusReviewed: 'Изучена',
       statusArchived: 'Архив',
@@ -316,12 +323,14 @@ export const messages: Record<Locale, Messages> = {
       login: 'Anmelden',
       logout: 'Abmelden',
       ideas: 'Ideen',
+      deliveryNotice:
+        'Neue Ideen werden per E-Mail gesendet. Frühere Einsendungen bleiben hier.',
       noNewIdeas: 'Keine neuen Einreichungen',
       newIdeasCount: (count) => `Neue Einreichungen: ${count}`,
       active: 'Aktiv',
       all: 'Alle',
       emptyTitle: 'Noch keine Einträge',
-      emptyDescription: 'Neue Ideen erscheinen hier automatisch.',
+      emptyDescription: 'Keine früheren Einsendungen in dieser Liste.',
       statusNew: 'Neu',
       statusReviewed: 'Geprüft',
       statusArchived: 'Archiviert',
@@ -385,7 +394,9 @@ export const messages: Record<Locale, Messages> = {
       active: 'Activas',
       all: 'Todas',
       emptyTitle: 'Todavía no hay nada aquí',
-      emptyDescription: 'Las nuevas ideas aparecerán automáticamente.',
+      deliveryNotice:
+        'Las nuevas ideas se envían por correo. Las solicitudes anteriores permanecen aquí.',
+      emptyDescription: 'No hay solicitudes anteriores en esta lista.',
       statusNew: 'Nueva',
       statusReviewed: 'Revisada',
       statusArchived: 'Archivada',
@@ -444,12 +455,14 @@ export const messages: Record<Locale, Messages> = {
       login: 'Se connecter',
       logout: 'Se déconnecter',
       ideas: 'Idées',
+      deliveryNotice:
+        'Les nouvelles idées sont envoyées par e-mail. Les propositions précédentes restent ici.',
       noNewIdeas: 'Aucune nouvelle proposition',
       newIdeasCount: (count) => `Nouvelles propositions : ${count}`,
       active: 'Actives',
       all: 'Toutes',
       emptyTitle: 'Rien pour le moment',
-      emptyDescription: 'Les nouvelles idées apparaîtront automatiquement.',
+      emptyDescription: 'Aucune proposition précédente dans cette liste.',
       statusNew: 'Nouvelle',
       statusReviewed: 'Étudiée',
       statusArchived: 'Archivée',
