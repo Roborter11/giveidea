@@ -31,15 +31,7 @@ export default function Home() {
           >
             <BrandLogo />
           </a>
-          <div className="flex items-center gap-3 sm:gap-5">
-            <LanguageSwitcher />
-            <a
-              href={localizedHref('/admin', locale)}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {t.common.team}
-            </a>
-          </div>
+          <LanguageSwitcher />
         </div>
       </header>
 
