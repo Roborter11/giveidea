@@ -1,1 +1,2 @@
-giveidea.xyz
+giveidea.xyz 
+https://giveidea.xyz/
